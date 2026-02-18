@@ -1,0 +1,149 @@
+# Beaconator Configuration v1.1
+
+# 機能を有効にするかどうか
+enabled: true
+
+# 効果を更新する間隔 (tick単位, 20 ticks = 1秒)
+# 例: 80 tick = 4秒ごとに効果を更新
+update-interval: 80
+
+# GUIのタイトル
+gui-title: "&2Beacon Menu"
+
+# GUIの行数 (1-6)
+gui-rows: 2
+
+# 上限に達した際に表示されるメッセージ ({limit}は最大数に置換されます)
+limit-reached-message: "&c同時に有効化できるバフは{limit}個までです"
+
+# GUIに表示するポーション効果を設定します
+# PotionEffectType: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html
+# Material: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+effects:
+  FAST_DIGGING:
+    enabled: true
+    display-name: "&6採掘速度上昇"
+    icon: "GOLDEN_PICKAXE"
+    slot: 0
+    ranks:
+      apprentice: 1  # Rank4: Lv.1
+      adept: 2       # Rank5: Lv.2
+      master: 3      # Rank7: Lv.3
+    lore:
+      - "&7ブロックを掘る速度が上がります"
+      - "&e現在のレベル: &fLv.{level}"
+      - "{status}"
+  NIGHT_VISION:
+    enabled: true
+    display-name: "&9暗視"
+    icon: "GOLDEN_CARROT"
+    slot: 1
+    ranks:
+      apprentice: 1  # 全ランク一律 Lv.1
+      adept: 1
+      expert: 1
+      master: 1
+    lore:
+      - "&7暗い場所でも見えるようになります"
+      - "{status}"
+
+  SPEED:
+    enabled: true
+    display-name: "&a移動速度上昇"
+    icon: "FEATHER"
+    slot: 2
+    ranks:
+      apprentice: 1  # Rank4: Lv.1
+      expert: 2      # Rank6: Lv.2
+    lore:
+      - "&7移動速度が上昇します"
+      - "&e現在のレベル: &fLv.{level}"
+      - "{status}"
+
+  JUMP:
+    enabled: true
+    display-name: "&b跳躍力上昇"
+    icon: "RABBIT_FOOT"
+    slot: 3
+    ranks:
+      adept: 1       # Rank5から解放
+      master: 2      # Rank7で強化
+    lore:
+      - "&7より高くジャンプできます"
+      - "&e現在のレベル: &fLv.{level}"
+      - "{status}"
+
+  WATER_BREATHING:
+    enabled: true
+    display-name: "&3水中呼吸"
+    icon: "PRISMARINE_CRYSTALS"
+    slot: 4
+    ranks:
+      adept: 1       # Rank5から解放
+    lore:
+      - "&7水中で息ができなくなります"
+      - "{status}"
+
+  CONDUIT_POWER:
+    enabled: true
+    display-name: "&bコンジットパワー"
+    icon: "NAUTILUS_SHELL"
+    slot: 5
+    ranks:
+      adept: 1
+    lore:
+      - "&7水中の視界・呼吸・採掘速度を強化します"
+      - "{status}"
+
+  FIRE_RESISTANCE:
+    enabled: true
+    display-name: "&6火炎耐性"
+    icon: "MAGMA_CREAM"
+    slot: 9
+    ranks:
+      apprentice: 1  # 全ランク一律 Lv.1
+      adept: 1
+      expert: 1
+      master: 1
+    lore:
+      - "&7火や溶岩のダメージを無効化します"
+      - "{status}"
+
+  DAMAGE_RESISTANCE:
+    enabled: true
+    display-name: "&7耐性"
+    icon: "IRON_CHESTPLATE"
+    slot: 10
+    ranks:
+      apprentice: 1
+      adept: 1
+      expert: 1
+      master: 2
+    lore:
+      - "&7受けるダメージを軽減します"
+      - "&eLv.{level}"
+      - "{status}"
+      -
+  INCREASE_DAMAGE:
+    enabled: true
+    display-name: "&c攻撃力上昇"
+    icon: "BLAZE_POWDER"
+    slot: 11
+    ranks:
+      expert: 1      # Rank6から解放
+      master: 2      # Rank7で強化
+    lore:
+      - "&7敵に与えるダメージが増加します"
+      - "&e現在のレベル: &fLv.{level}"
+      - "{status}"
+
+  REGENERATION:
+    enabled: true
+    display-name: "&d再生能力"
+    icon: "GHAST_TEAR"
+    slot: 12
+    ranks:
+      master: 1      # Rank7(Master)のみ解放
+    lore:
+      - "&7体力が自動的に回復します"
+      - "{status}"
