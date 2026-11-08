@@ -1,7 +1,7 @@
 name: Beaconator
 version: '${version}'
 main: net.azisaba.beaconator.Beaconator
-api-version: '1.15'
+api-version: '1.21'
 author: albardoo02
 description: A plugin that allows players to toggle potion buffs on themselves via a GUI.
 commands:
@@ -13,6 +13,6 @@ commands:
       - buff
 permissions:
   beaconator.level.apprentice:
-  beaconator.level.adapt:
+  beaconator.level.adept:
   beaconator.level.expert:
   beaconator.level.master:

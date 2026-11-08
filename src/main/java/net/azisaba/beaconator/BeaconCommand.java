@@ -1,6 +1,7 @@
 package net.azisaba.beaconator;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,29 +17,26 @@ public class BeaconCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "このコマンドはプレイヤーのみ使用できます");
+        if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+            if (sender.hasPermission("beaconator.reload")) {
+                plugin.reload();
+                sender.sendMessage(Component.text("Configをリロードしました"));
+            } else {
+                sender.sendMessage(Component.text("権限がありません", NamedTextColor.RED));
+            }
             return true;
         }
-        Player player = (Player) sender;
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("このコマンドはプレイヤーのみ使用できます", NamedTextColor.RED));
+            return true;
+        }
         if (!plugin.isBeaconEnabled()) {
-            player.sendMessage("ビーコンは無効化されています");
+            player.sendMessage(Component.text("ビーコンは無効化されています"));
             return true;
         }
         if (args.length == 0) {
             plugin.getBuffGUI().openBeaconGui(player);
             return true;
-        }
-        if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("reload")) {
-                if (sender.hasPermission("beaconator.reload")) {
-                    plugin.reloadConfig();
-                    sender.sendMessage("Configをリロードしました");
-                } else {
-                    sender.sendMessage(ChatColor.RED + "権限がありません");
-                }
-                return  true;
-            }
         }
         return false;
     }

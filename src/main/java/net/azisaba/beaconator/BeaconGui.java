@@ -1,17 +1,18 @@
 package net.azisaba.beaconator;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,48 +28,67 @@ public class BeaconGui implements InventoryHolder {
     }
 
     public void openBeaconGui(Player player) {
-        String title = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("gui-title", "&1Player Buffs"));
-        int rows = plugin.getConfig().getInt("gui-rows", 3);
-        inv = Bukkit.createInventory(this, rows * 9, title);
-
-        updateItems(player);
-        player.openInventory(inv);
+        Component title = Texts.legacy(plugin.getConfig().getString("gui-title", "&1Player Buffs"));
+        int rows = Math.max(1, Math.min(6, plugin.getConfig().getInt("gui-rows", 3)));
+        BeaconGui holder = new BeaconGui(plugin);
+        holder.inv = Bukkit.createInventory(holder, rows * 9, title);
+        holder.updateItems(player);
+        player.openInventory(holder.inv);
     }
 
     public void updateItems(Player player) {
         inv.clear();
         ConfigurationSection effects = plugin.getConfig().getConfigurationSection("effects");
         if (effects == null) return;
-        Set<PotionEffectType> activeSet = plugin.getActiveBuffs(player);
+        Set<String> activeSet = plugin.getActiveBuffs(player);
         for (String key : effects.getKeys(false)) {
             ConfigurationSection config = effects.getConfigurationSection(key);
+            if (config == null || !config.getBoolean("enabled", true)) continue;
+            int slot = config.getInt("slot", -1);
+            if (slot < 0 || slot >= inv.getSize()) continue;
+
             int level = plugin.getAvailableEffectLevel(player, key);
             boolean isLocked = (level < 0);
-            PotionEffectType type = PotionEffectType.getByName(key);
-            Material mat = isLocked ? Material.BARRIER : Material.valueOf(config.getString("icon", "STONE"));
+            boolean isActive = !isLocked && activeSet.contains(key);
+
+            Material mat = isLocked ? Material.BARRIER : Material.matchMaterial(config.getString("icon", "STONE"));
+            if (mat == null) mat = Material.STONE;
             ItemStack item = new ItemStack(mat);
             ItemMeta meta = item.getItemMeta();
-            String name = ChatColor.translateAlternateColorCodes('&', config.getString("display-name", key));
-            meta.setDisplayName(isLocked ? "§8§m" + ChatColor.stripColor(name) + " §c[未解放]" : name);
-            List<String> lore = new ArrayList<>();
-            for (String line : config.getStringList("lore")) {
-                String status = isLocked ? "§c[未解放]" : (activeSet.contains(type) ? "§a[有効]" : "§7[無効]");
-                String lvlStr = isLocked ? "???" : String.valueOf(level + 1);
-                lore.add(ChatColor.translateAlternateColorCodes('&', line.replace("{status}", status).replace("{level}", lvlStr)));
-            }
-            if (isLocked) lore.add("§c※この効果を使用するにはランクアップが必要です");
 
-            meta.setLore(lore);
+            String status = isLocked ? "&c[未解放]" : (isActive ? "&a[有効]" : "&7[無効]");
+            String lvlStr = isLocked ? "???" : String.valueOf(level + 1);
+            Component name = Texts.item(applyPlaceholders(config.getString("display-name", key), status, lvlStr));
+            if (isLocked) {
+                name = Texts.noItalic(Component.text(Texts.plain(name), NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH)
+                        .append(Component.text(" [未解放]", NamedTextColor.RED).decoration(TextDecoration.STRIKETHROUGH, false)));
+            }
+            meta.displayName(name);
+
+            List<Component> lore = new ArrayList<>();
+            for (String line : config.getStringList("lore")) {
+                lore.add(Texts.item(applyPlaceholders(line, status, lvlStr)));
+            }
+            if (isLocked) {
+                lore.add(Texts.noItalic(Component.text("※この効果を使用するにはランクアップが必要です", NamedTextColor.RED)));
+            }
+            meta.lore(lore);
+
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
-            if (!isLocked && activeSet.contains(type)) meta.addEnchant(Enchantment.DURABILITY, 1, true);
+            meta.setEnchantmentGlintOverride(isActive);
 
             item.setItemMeta(meta);
-            inv.setItem(config.getInt("slot"), item);
+            inv.setItem(slot, item);
         }
     }
 
+    private static String applyPlaceholders(String text, String status, String level) {
+        if (text == null) return "";
+        return text.replace("{status}", status).replace("{level}", level);
+    }
+
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         return inv;
     }
 }

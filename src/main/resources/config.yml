@@ -81,7 +81,7 @@ effects:
     ranks:
       adept: 1       # Rank5から解放
     lore:
-      - "&7水中で息ができなくなります"
+      - "&7水中で息ができるようになります"
       - "{status}"
 
   CONDUIT_POWER:
@@ -123,7 +123,7 @@ effects:
       - "&7受けるダメージを軽減します"
       - "&eLv.{level}"
       - "{status}"
-      -
+
   INCREASE_DAMAGE:
     enabled: true
     display-name: "&c攻撃力上昇"
