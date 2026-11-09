@@ -13,6 +13,17 @@ commands:
       - buff
 permissions:
   beaconator.level.apprentice:
+    description: Apprentice rank buffs
+    default: op
   beaconator.level.adept:
+    description: Adept rank buffs
+    default: op
   beaconator.level.expert:
+    description: Expert rank buffs
+    default: op
   beaconator.level.master:
+    description: Master rank buffs
+    default: op
+  beaconator.reload:
+    description: Allows /beacon reload
+    default: op
